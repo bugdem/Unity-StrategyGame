@@ -5,10 +5,11 @@ namespace GameEngine.Game.Core
 {
     public class PoolManager : PersistentSingleton<PoolManager>
     {
-        [SerializeField] private SimpleObjectPooler _menuItemProductionPooler;
-        [SerializeField] private SimpleObjectPooler _boardProductionPooler;
+		[SerializeField] private SimpleObjectPooler _boardProductionPooler;
+		[SerializeField] private SimpleObjectPooler _menuItemProductionPooler;
+        [SerializeField] private SimpleObjectPooler _menuItemProductionItemPooler;
 
-        public PoolableObject GetMenuItemForProduction()
+		public PoolableObject GetMenuItemForProduction()
         {
 			return _menuItemProductionPooler.GetPooledGameObject();
 		}
@@ -17,5 +18,10 @@ namespace GameEngine.Game.Core
         {
             return _boardProductionPooler.GetPooledGameObject();
         }
-    }
+
+		public PoolableObject GetMenuItemForProductionItem()
+		{
+			return _menuItemProductionItemPooler.GetPooledGameObject();
+		}
+	}
 }

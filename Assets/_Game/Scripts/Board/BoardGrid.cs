@@ -23,6 +23,12 @@ namespace GameEngine.Game.Core
 		private Dictionary<Vector3, BoardElement> _boardElementDict = new();
 		private HashSet<BoardElement> _boardElements = new();
 
+		public BoardElement GetBoardElement(Vector3Int cellIndex)
+		{
+			_boardElementDict.TryGetValue(cellIndex, out var boardElement);
+			return boardElement;
+		}
+
 		public bool CheckBoardElementBounds(BoardElement boardElement, Vector3 targetPosition, BoardElementPlacement placementInfo = null)
 		{
 			bool canBePlaced = true;

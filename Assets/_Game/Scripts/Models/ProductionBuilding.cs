@@ -6,7 +6,7 @@ using UnityEngine;
 namespace GameEngine.Game.Core
 {
     [CreateAssetMenu(fileName = "Building", menuName = "Game Engine/Production/Building")]
-    public class ProductionBuilding : Production, IPlacableData
+    public class ProductionBuilding : Production, IPlacableData, IItemProducer
     {
         [Header("Building")]
         [SerializeField] private PlacableData _placable;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 
 namespace GameEngine.Game.Core
@@ -8,6 +9,12 @@ namespace GameEngine.Game.Core
 	public interface IPlacableData
 	{
 		PlacableData Placable { get; }
+		public string Name { get; }
+	}
+
+	public interface IItemProducer
+	{
+		ReadOnlyCollection<ProductionItem> ProductionItems { get; }
 	}
 
 	[Serializable]

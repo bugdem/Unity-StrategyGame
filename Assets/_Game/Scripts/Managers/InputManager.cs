@@ -4,7 +4,7 @@ using GameEngine.Library.Utils;
 
 namespace GameEngine.Game.Core
 {
-	// Exposes TouchControls to be used in other classes.
+	// Exposes TouchControls to be used by other classes.
 	// Button statuses can be accessed directly or with event listeners.
 	[DefaultExecutionOrder(-1)]
 	public class InputManager : PersistentSingleton<InputManager>
@@ -13,9 +13,6 @@ namespace GameEngine.Game.Core
 		public static InputButton MoveToPositionButton { get; private set; }
 		public static Vector2 TouchPosition { get; private set; }
 		public static Vector2 MoveToPosition { get; private set; }
-		public static Vector2 PointerPosition { get; private set; }
-		public static Vector2 TouchStartPosition { get; private set; }
-		public static Vector2 TouchEndPosition { get; private set; }
 
 		private TouchControls _touchControls;
 
@@ -49,32 +46,34 @@ namespace GameEngine.Game.Core
 		{
 			// Debug.Log("Touch Started!");
 
-			TouchStartPosition = _touchControls.Player.TouchPosition.ReadValue<Vector2>();
-			TouchPosition = TouchStartPosition;
-			TouchButton.OnTouchStarted();
+			Vector2 touchPosition = _touchControls.Player.TouchPosition.ReadValue<Vector2>();
+			TouchPosition = touchPosition;
+			TouchButton.OnTouchStarted(touchPosition);
 		}
 
 		private void OnTouchCanceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
 		{
 			// Debug.Log("Touch Ended!");
 
-			TouchEndPosition = _touchControls.Player.TouchPosition.ReadValue<Vector2>();
-			TouchButton.OnTouchCanceled();
+			Vector2 touchPosition = _touchControls.Player.TouchPosition.ReadValue<Vector2>();
+			TouchButton.OnTouchCanceled(touchPosition);
 		}
 
 		private void OnMoveToPositionStarted(UnityEngine.InputSystem.InputAction.CallbackContext obj)
 		{
 			// Debug.Log("Move To Position Started!");
 
-			MoveToPosition = _touchControls.Player.TouchPosition.ReadValue<Vector2>();
-			MoveToPositionButton.OnTouchStarted();
+			Vector2 touchPosition = _touchControls.Player.TouchPosition.ReadValue<Vector2>();
+			MoveToPosition = touchPosition;
+			MoveToPositionButton.OnTouchStarted(touchPosition);
 		}
 
 		private void OnMoveToPositionCanceled(UnityEngine.InputSystem.InputAction.CallbackContext obj)
 		{
 			// Debug.Log("Move To Position Ended!");
 
-			MoveToPositionButton.OnTouchCanceled();
+			Vector2 touchPosition = _touchControls.Player.TouchPosition.ReadValue<Vector2>();
+			MoveToPositionButton.OnTouchCanceled(touchPosition);
 		}
 
 		private void ResetValues()
@@ -83,7 +82,6 @@ namespace GameEngine.Game.Core
 			MoveToPositionButton.Reset();
 
 			TouchPosition = Vector2.zero;
-			TouchStartPosition = Vector2.zero;
 			MoveToPosition = Vector2.zero;
 		}
 
@@ -115,6 +113,11 @@ namespace GameEngine.Game.Core
 		public bool IsTouchUp { get; private set; }
 		public bool WasTouching { get; private set; }
 		public bool IsTouching { get; private set; }
+		public bool IsTap => IsTouchUp && (TouchEndTime - TouchStartTime) < 0.75f && (TouchEndPosition - TouchStartPosition).magnitude < 10f;
+		public Vector2 TouchStartPosition { get; private set; }
+		public Vector2 TouchEndPosition { get; private set; }
+		public float TouchStartTime { get; private set; }
+		public float TouchEndTime { get; private set; }
 
 		public delegate void TouchHandler();
 		public delegate void TouchHandlerStatus(bool status);
@@ -139,6 +142,22 @@ namespace GameEngine.Game.Core
 			}
 		}
 
+		public void OnTouchStarted(Vector2 position)
+		{
+			TouchStartPosition = position;
+			TouchStartTime = Time.time;
+			IsTouching = true;
+			OnTouchDown?.Invoke();
+		}
+
+		public void OnTouchCanceled(Vector2 position)
+		{
+			TouchEndPosition = position;
+			TouchEndTime = Time.time;
+			IsTouching = false;
+			OnTouchUp?.Invoke();
+		}
+
 		public void Reset()
 		{
 			IsTouchDown = false;
@@ -147,18 +166,11 @@ namespace GameEngine.Game.Core
 			IsTouching = false;
 			OnTouchDown = null;
 			OnTouchUp = null;
-		}
 
-		public void OnTouchStarted()
-		{
-			IsTouching = true;
-			OnTouchDown?.Invoke();
-		}
-
-		public void OnTouchCanceled()
-		{
-			IsTouching = false;
-			OnTouchUp?.Invoke();
+			TouchStartPosition = Vector2.zero;
+			TouchEndPosition = Vector2.zero;
+			TouchStartTime = 0f;
+			TouchEndTime = 0f;
 		}
 	}
 }

@@ -12,5 +12,11 @@ namespace GameEngine.Game.Core
 
         public ProductionMenu ProductionMenu => _productionMenu;
         public InformationMenu InformationMenu => _informationMenu;
+
+        public bool IsScreenPointOverMenu(Vector2 screenPoint)
+        {
+            return RectTransformUtility.RectangleContainsScreenPoint(ProductionMenu.GetComponent<RectTransform>(), screenPoint) ||
+				   RectTransformUtility.RectangleContainsScreenPoint(InformationMenu.GetComponent<RectTransform>(), screenPoint);
+		}
     }
 }
