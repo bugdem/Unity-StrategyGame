@@ -38,6 +38,15 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 2601801549
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BoardElement
+    uniqueID: 1656652111
+    locked: 0
+  - name: Dragging
+    uniqueID: 950403685
     locked: 0

@@ -24,7 +24,7 @@ namespace GameEngine.Game.Core
 
             foreach (var product in BoardController.Instance.Setting.Productions)
             {
-				var poolableProductItem = PoolManager.Instance.GetProductionMenuItem();
+				var poolableProductItem = PoolManager.Instance.GetMenuItemForProduction();
 				poolableProductItem.transform.localScale = Vector3.one;
 				poolableProductItem.transform.localPosition = Vector3.zero;
 				poolableProductItem.transform.localRotation = Quaternion.identity;

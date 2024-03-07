@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameEngine.Library.Utils;
+using System;
+using UnityEngine.UIElements;
 
 namespace GameEngine.Game.Core
 {
@@ -11,40 +13,68 @@ namespace GameEngine.Game.Core
 		[SerializeField] private BoardGrid _boardGrid;
 
 		public BoardSetting Setting => _boardSetting;
-		public ProductionMenuItemView SelectedProductionMenuItemView { get; private set; }
+		public ProductionMenuItemView DraggingProductionMenuItemView { get; private set; }
+		public BoardProduction DraggingBoardProduction { get; private set; }
 
-		public Vector3 _position;
+		private Camera _camera;
+
+		private BoardElementPlacement _draggingBoardElementPlacementInfo;
+		private Vector3 _draggingBoardProductionLastCheckedPos = Vector3.zero;
+		private const float _boardProductionPlaceCheckDistance = 0.01f;
+
+		private void Start()
+		{
+			_camera = Camera.main;
+			_draggingBoardElementPlacementInfo = new();
+		}
 
 		private void Update()
 		{
 			if (InputManager.TouchButton.IsTouchDown)
 			{
-				Vector3 worldPos = Camera.main.ScreenToWorldPoint(InputManager.TouchPosition);
-				_position = _boardGrid.Grid.GetCellCenterWorld(_boardGrid.Grid.WorldToCell(worldPos));
+
 			}
 			else if (InputManager.TouchButton.IsTouchUp)
 			{
-				if (SelectedProductionMenuItemView != null)
+				if (DraggingProductionMenuItemView != null)
 				{
 					OnProductionMenuItemDeselected();
 				}
 			}
 
-			if (SelectedProductionMenuItemView != null)
+			if (DraggingBoardProduction != null)
 			{
+				DraggingBoardProduction.transform.position = GetTouchWorldPosition();				
+				if (Vector3.Distance(DraggingBoardProduction.transform.position, _draggingBoardProductionLastCheckedPos) > _boardProductionPlaceCheckDistance)
+				{
+					_draggingBoardProductionLastCheckedPos = DraggingBoardProduction.transform.position;
+					_draggingBoardElementPlacementInfo.Clear();
+					_boardGrid.CheckBoardElementBounds(DraggingBoardProduction, DraggingBoardProduction.transform.position, _draggingBoardElementPlacementInfo);
+				}
 
+				foreach (var cellIndex in _draggingBoardElementPlacementInfo.AvailableCells)
+					GEDebug.DrawCube(_boardGrid.Grid.GetCellCenterWorld(cellIndex), Color.green, _boardGrid.Grid.cellSize);
+
+				foreach (var cellIndex in _draggingBoardElementPlacementInfo.NotAvailableCells)
+					GEDebug.DrawCube(_boardGrid.Grid.GetCellCenterWorld(cellIndex), Color.red, _boardGrid.Grid.cellSize);
 			}
-
-			GEDebug.DrawCube(_position, Color.red, Vector3.one * 0.5f);
 		}
 
 		public void OnProductionMenuItemSelected(ProductionMenuItemView productionMenuItemView)
 		{
 			// Production menu needs to be notified to make scrollview stop scrolling after item is selected.
 			BoardUI.Instance.ProductionMenu.OnProductionMenuItemSelected(productionMenuItemView);
-			SelectedProductionMenuItemView = productionMenuItemView;
+			DraggingProductionMenuItemView = productionMenuItemView;
 
 			Debug.Log("Pointer down: " + productionMenuItemView.name);
+
+			// If selected production is placable, create board element for that production and set it as dragging object.
+			if (productionMenuItemView.Production is IPlacableData placableData)
+			{
+				Vector3 newBoardProductionPosition = GetTouchWorldPosition();
+				DraggingBoardProduction = CreateBoardProduction(placableData, newBoardProductionPosition);
+				DraggingBoardProduction.OnPlacementStarted();
+			}
 		}
 
 		public void OnProductionMenuItemDeselected()
@@ -53,18 +83,41 @@ namespace GameEngine.Game.Core
 			BoardUI.Instance.ProductionMenu.OnProductionMenuItemDeselected();
 
 			// Notify currently selected production menu item view that pointer up event has been triggered manually.
-			SelectedProductionMenuItemView.OnPointerUp();
+			DraggingProductionMenuItemView.OnPointerUp();
 
-			PlaceProduction();
+			if (DraggingBoardProduction != null)
+			{
+				// If dragging board production could not be placed, return it to the pool.
+				if (!_boardGrid.PlaceBoardElement(DraggingBoardProduction, _draggingBoardElementPlacementInfo))
+				{
+					DraggingBoardProduction.OnPlacementEnded(false);
+					DraggingBoardProduction.GetComponent<PoolableObject>().Destroy();
+				}
+				else
+					DraggingBoardProduction.OnPlacementEnded(true);
+			}
 
-			SelectedProductionMenuItemView = null;
+			DraggingBoardProduction = null;
+			DraggingProductionMenuItemView = null;
 
 			Debug.Log("Pointer up!");
 		}
 
-		private bool PlaceProduction()
+		private BoardProduction CreateBoardProduction(IPlacableData placableData, Vector3 position)
 		{
-			return true;
+			var boardProductionPoolable = PoolManager.Instance.GetBoardProduction();
+			boardProductionPoolable.transform.position = position;
+			boardProductionPoolable.gameObject.SetActive(true);
+
+			var boardProduction = boardProductionPoolable.GetComponent<BoardProduction>();
+			boardProduction.SetPlacable(placableData);
+
+			return boardProduction;
+		}
+
+		private Vector3 GetTouchWorldPosition()
+		{
+			return _camera.ScreenToWorldPoint(InputManager.TouchPosition);
 		}
 	}
 }

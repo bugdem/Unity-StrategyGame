@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Barracks
   m_EditorClassIdentifier: 
   _name: Barracks
-  _menuItemIcon: {fileID: 0}
+  _menuItemIcon: {fileID: 21300000, guid: 9f45c679d4554d847bfa54dda5a5f33f, type: 3}
   _placable:
-    _boardSprite: {fileID: 0}
+    _boardSprite: {fileID: 21300000, guid: 9f45c679d4554d847bfa54dda5a5f33f, type: 3}
     _size: {x: 4, y: 4}
     _currentHealth: 100
     _maxHealth: 100

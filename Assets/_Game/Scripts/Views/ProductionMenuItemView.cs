@@ -12,7 +12,7 @@ namespace GameEngine.Game.Core
         [SerializeField] private Image _icon;
 		[SerializeField] private Transform _highlight;
 
-		public bool IsHighlightEnabled => BoardController.Instance.SelectedProductionMenuItemView == null;
+		public bool IsHighlightEnabled => BoardController.Instance.DraggingProductionMenuItemView == null;
         public Production Production { get; private set; }
 
 		public void SetProduct(Production product)

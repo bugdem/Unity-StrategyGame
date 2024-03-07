@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: PowerPlant
   m_EditorClassIdentifier: 
   _name: Power Plant
-  _menuItemIcon: {fileID: 0}
+  _menuItemIcon: {fileID: 21300000, guid: 926095654072326469b205ea7f16a3a9, type: 3}
   _placable:
-    _boardSprite: {fileID: 0}
+    _boardSprite: {fileID: 21300000, guid: 926095654072326469b205ea7f16a3a9, type: 3}
     _size: {x: 2, y: 3}
     _currentHealth: 50
     _maxHealth: 50
