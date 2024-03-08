@@ -19,6 +19,7 @@ namespace GameEngine.Game.Core
 		[Header("Focus")]
 		[SerializeField] private Ease _focusEase = Ease.OutCubic;
 		[SerializeField] private float _focusDuration = 0.5f;
+		[SerializeField] private Vector3 _focusOffset;
 
 		[Header("Pan")]
 		[SerializeField] private float _panSpeed = 1f;
@@ -62,7 +63,7 @@ namespace GameEngine.Game.Core
 			StopPan();
 
 			Vector3 targetPosition = new Vector3(position.x, position.y, _cmMain.transform.position.z);
-			targetPosition = ClampToBounds(targetPosition);
+			targetPosition = ClampToBounds(targetPosition + _focusOffset);
 			_focusTween = _cmMain.transform.DOMove(targetPosition, _focusDuration)
 												.SetEase(_focusEase)
 												.OnComplete(() =>

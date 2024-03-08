@@ -30,7 +30,7 @@ namespace GameEngine.Library.Utils
 		public virtual void Destroy()
 		{
 			if (InitialParent != null)
-				transform.SetParent(InitialParent.transform);
+				transform.SetParent(InitialParent);
 
 			gameObject.SetActive(false);
 		}

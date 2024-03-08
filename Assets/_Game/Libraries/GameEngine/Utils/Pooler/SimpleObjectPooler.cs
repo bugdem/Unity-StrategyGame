@@ -112,6 +112,17 @@ namespace GameEngine.Library.Utils
 			return newGameObject;
 		}
 
+		public virtual void RegisterPoolableObjectInWorld(PoolableObject poolableObject)
+		{
+			if (NestWaitingPool)
+				poolableObject.transform.SetParent(_waitingPool.transform);
+
+			_pooledGameObjects.Add(poolableObject);
+			_objectPool.PooledGameObjects.Add(poolableObject);
+
+			ObjectAdded(poolableObject);
+		}
+
 		/// <summary>
 		/// Gets poolable objects from pool to be used on scene unload event, which destroys used poolable objects.
 		/// </summary>

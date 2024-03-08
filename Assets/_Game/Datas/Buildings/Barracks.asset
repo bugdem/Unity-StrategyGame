@@ -19,6 +19,7 @@ MonoBehaviour:
     _size: {x: 4, y: 4}
     _currentHealth: 100
     _maxHealth: 100
+  _spawnCellIndex: {x: 4, y: 0, z: 0}
   _productionItems:
   - {fileID: 11400000, guid: 4b7748202f3cb404489c7a47ffbd7743, type: 2}
   - {fileID: 11400000, guid: 9bd5fea4a51211d47b692a00cec52d82, type: 2}

@@ -5,11 +5,18 @@ using UnityEngine;
 
 namespace GameEngine.Game.Core
 {
-    [CreateAssetMenu(fileName = "Building", menuName = "Game Engine/Production/Building")]
+	public interface IItemProducer
+	{
+		Vector3Int SpawnCellIndex { get; }
+		ReadOnlyCollection<ProductionItem> ProductionItems { get; }
+	}
+
+	[CreateAssetMenu(fileName = "Building", menuName = "Game Engine/Production/Building")]
     public class ProductionBuilding : Production, IPlacableData, IItemProducer
     {
         [Header("Building")]
         [SerializeField] private PlacableData _placable;
+		[SerializeField] private Vector3Int _spawnCellIndex;
         [SerializeField] private List<ProductionItem> _productionItems;
 
 		public PlacableData Placable => _placable;
@@ -25,5 +32,7 @@ namespace GameEngine.Game.Core
                 return _readOnlyProductionItems;
 			}
         }
+
+		public Vector3Int SpawnCellIndex => _spawnCellIndex;
 	}
 }
