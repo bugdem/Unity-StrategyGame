@@ -10,7 +10,8 @@ namespace GameEngine.Game.Core
     {
 		[SerializeField] private BoardSetting _boardSetting;
 		[SerializeField] private BoardGrid _boardGrid;
-		public Texture2D _attackCursorTexture;
+		[SerializeField] private Texture2D _attackCursorTexture;
+		[SerializeField] private Transform _movePointIndicator;
 
 		public BoardSetting Setting => _boardSetting;
 		public ProductionMenuItemView DraggingProductionMenuItemView { get; private set; }
@@ -136,6 +137,9 @@ namespace GameEngine.Game.Core
 							if (touchedBoardElement != null && touchedBoardElement.FightingSide != SelectedBoardElement.FightingSide)
 								attack = true;
 
+							_movePointIndicator.position = _boardGrid.Grid.GetCellCenterWorld(path[path.Count - 1].GridIndex);
+							_movePointIndicator.gameObject.SetActive(true);
+
 							productionItem.MovePath(path, onPathCompleted: (reachedCellIndex) =>
 							{
 								// If an enemy is targeted, start attacking.
@@ -148,13 +152,17 @@ namespace GameEngine.Game.Core
 				}
 			}
 
+#if UNITY_EDITOR
 			{
+				// Draw touched cell for debugging.
 				Vector3 touchWorldPosition = GetTouchWorldPosition();
 				Vector3Int touchedCellPosition = _boardGrid.Grid.WorldToCell(touchWorldPosition);
 				Vector3 cellCenter = _boardGrid.Grid.GetCellCenterWorld(touchedCellPosition);
 				GEDebug.DrawCube(cellCenter, Color.red, _boardGrid.Grid.cellSize);
 			}
+#endif
 
+			// Check if cursor should be changed to attack cursor.
 			bool attackCursor = false;
 			if (SelectedBoardElement != null && SelectedBoardElement.PlacableData is IPlacableUnit)
 			{
@@ -269,7 +277,7 @@ namespace GameEngine.Game.Core
 		public void OnProductionMenuItemDeselected()
 		{
 			// Notify Production menu to make scrollview scrollable again.
-			BoardUI.Instance.ProductionMenu.OnProductionMenuItemDeselected();
+			BoardUI.Instance.ProductionMenu.OnProductionMenuItemDeselected(DraggingProductionMenuItemView);
 
 			// Notify currently selected production menu item view that pointer up event has been triggered manually.
 			DraggingProductionMenuItemView.OnPointerUp();
@@ -334,6 +342,8 @@ namespace GameEngine.Game.Core
 
 		private void OnBoardElementDeselected(BoardElement boardElement)
 		{
+			_movePointIndicator.gameObject.SetActive(false);
+
 			boardElement.OnDeSelected();
 			BoardUI.Instance.InformationMenu.Hide();
 

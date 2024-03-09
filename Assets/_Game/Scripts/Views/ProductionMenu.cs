@@ -52,7 +52,7 @@ namespace GameEngine.Game.Core
 			_scrollRect.enabled = false;
 		}
 
-		public void OnProductionMenuItemDeselected()
+		public void OnProductionMenuItemDeselected(ProductionMenuItemView productionMenuItemView)
 		{
 			_scrollRect.enabled = true;
 		}

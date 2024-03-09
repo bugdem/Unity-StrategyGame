@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace GameEngine.Game.Core
 {
-    public class InformationMenuProductItemView : MonoBehaviour, IPointerDownHandler
+    public class InformationMenuProductItemView : MonoBehaviour/*, IPointerDownHandler*/
 	{
         [SerializeField] private Image _icon;
         [SerializeField] private TMPro.TextMeshProUGUI _name;
@@ -22,6 +22,11 @@ namespace GameEngine.Game.Core
 		}
 
 		public void OnPointerDown(PointerEventData eventData)
+		{
+			BoardController.Instance.OnInformationProductionItemSelected(this);
+		}
+
+		public void OnClicked()
 		{
 			BoardController.Instance.OnInformationProductionItemSelected(this);
 		}

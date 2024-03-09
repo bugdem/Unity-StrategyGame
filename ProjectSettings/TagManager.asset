@@ -47,6 +47,9 @@ TagManager:
   - name: BoardElement
     uniqueID: 1656652111
     locked: 0
+  - name: Overlay
+    uniqueID: 4132066315
+    locked: 0
   - name: Dragging
     uniqueID: 950403685
     locked: 0

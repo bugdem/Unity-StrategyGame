@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -28,14 +29,19 @@ namespace GameEngine.Game.Core
 			_highlight.gameObject.SetActive(status);
 		}
 
+		// Handled by Unity's Event System.
 		public void OnPointerDown(PointerEventData eventData)
 		{
+			Highlight(true);
+
 			BoardController.Instance.OnProductionMenuItemSelected(this);
 		}
 
+		// Handled by in game events. Player may have released the mouse button outside of this view.
+		// If so, we need to deselect this view manually.
 		public void OnPointerUp()
 		{
-
+			Highlight(false);
 		}
 
 		public void OnPointerEnter(PointerEventData eventData)
