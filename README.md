@@ -2,7 +2,7 @@
 
 A strategy game demo that demonstrates various techniques of OOP regarding to GDD.
 
-- SpriteAtlas is used for the tiles and character animations to reduce the draw calls.
+- SpriteAtlas is used for the tiles and character animations to reduce the draw calls (ScrollView's mask adds more than 10 setpass call, so to make it under 20 call, mask can be disabled).
 - Game is designed with new Input System logic is abstracted.
 - Canvas objects are adjusted to fit different screen sizes.
 - Productions and soldiers(Production items) are defined as ScriptableObjects.
