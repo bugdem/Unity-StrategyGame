@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace GameEngine.Game.Core
 {
+	// Used for grid and board element placement operations.
+	// Operations uses bottom left cell index as reference. Dimension(size) calculations are based on this.
 	[RequireComponent(typeof(Grid))]
 	public class BoardGrid : MonoBehaviour, IPathfindable
 	{

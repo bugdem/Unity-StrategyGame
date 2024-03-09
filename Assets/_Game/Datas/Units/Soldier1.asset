@@ -15,10 +15,12 @@ MonoBehaviour:
   _name: Soldier 1
   _menuItemIcon: {fileID: 4723107735738678597, guid: 3bdd730929a8a024b906d779a6ff35fa, type: 3}
   _placable:
-    _boardSprite: {fileID: 0}
+    _boardSprite: {fileID: 360617890, guid: c70504652c221cf47be95db2be4822c2, type: 3}
+    _boardSpriteOffset: {x: -0.1, y: -0.5}
     _size: {x: 1, y: 1}
     _currentHealth: 10
     _maxHealth: 10
   _attack: 10
+  _attackSpeed: 1
   _moveSpeed: 4
-  _animatorController: {fileID: 9100000, guid: a08fc71a87fe29047b93017ed22c5817, type: 2}
+  _runtimeAnimatorController: {fileID: 9100000, guid: a08fc71a87fe29047b93017ed22c5817, type: 2}

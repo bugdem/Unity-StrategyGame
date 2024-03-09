@@ -11,13 +11,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: BoardProductionItemWorld
       objectReference: {fileID: 0}
+    - target: {fileID: 7935940873540932935, guid: 61caf828c3252e545806fba4c2ef7e2c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7935940873540932935, guid: 61caf828c3252e545806fba4c2ef7e2c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8344194632522974729, guid: 61caf828c3252e545806fba4c2ef7e2c, type: 3}
+      propertyPath: m_Size.x
+      value: 0.155
+      objectReference: {fileID: 0}
+    - target: {fileID: 8344194632522974729, guid: 61caf828c3252e545806fba4c2ef7e2c, type: 3}
+      propertyPath: m_Size.y
+      value: 0.335
+      objectReference: {fileID: 0}
     - target: {fileID: 8344194632522974729, guid: 61caf828c3252e545806fba4c2ef7e2c, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 360617890, guid: c70504652c221cf47be95db2be4822c2, type: 3}
     - target: {fileID: 8344194632522974729, guid: 61caf828c3252e545806fba4c2ef7e2c, type: 3}
       propertyPath: m_WasSpriteAssigned
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9194561004403849699, guid: 61caf828c3252e545806fba4c2ef7e2c, type: 3}
       propertyPath: m_RootOrder

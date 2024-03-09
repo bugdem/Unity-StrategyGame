@@ -8,8 +8,11 @@ namespace GameEngine.Game.Core
 {
     public class BoardController : Singleton<BoardController>
     {
+		[Header("Board")]
 		[SerializeField] private BoardSetting _boardSetting;
 		[SerializeField] private BoardGrid _boardGrid;
+
+		[Header("Gameplay")]
 		[SerializeField] private Texture2D _attackCursorTexture;
 		[SerializeField] private Transform _movePointIndicator;
 
@@ -18,10 +21,12 @@ namespace GameEngine.Game.Core
 		public BoardProduction DraggingBoardProduction { get; private set; }
 		public BoardElement SelectedBoardElement { get; private set; }
 
+		// Placement related variables.
 		private BoardElementPlacement _boardElementPlacementInfo;
 		private Vector3 _draggingBoardProductionLastCheckedPos = Vector3.zero;
 		private const float _boardProductionPlaceCheckDistance = 0.01f;
 
+		// Holds grid cell overlays for dragging board production.
 		private Dictionary<Vector3Int, GridCellOverlay> _gridCellOverlays = new();
 
 		private Pathfinder _pathfinder;
@@ -59,15 +64,17 @@ namespace GameEngine.Game.Core
 					{
 						deselectInformationMenu = false;
 					}
-					// If touch over board and it is a tap(like mouse click), check if there is a board element on the touch position.
+					// If touch is over board and it is a tap(like mouse click), check if there is a board element on the touch position.
 					else if (InputManager.TouchButton.IsTap)
 					{
 						Vector3 touchWorldPosition = GetTouchWorldPosition();
 						Vector3Int touchedCellPosition = _boardGrid.Grid.WorldToCell(touchWorldPosition);
 						BoardElement selectedBoardElement = _boardGrid.GetBoardElement(touchedCellPosition);
+
+						// Check if there is a board element on touch and it is a player side element.
 						if (selectedBoardElement != null && selectedBoardElement.FightingSide == FightingSide.Player)
 						{
-							// There is a board element on the tap position.
+							// There is a board element on the tap position, select it.
 							deselectInformationMenu = false;
 							OnBoardElementSelected(selectedBoardElement);
 
@@ -90,7 +97,9 @@ namespace GameEngine.Game.Core
 			// If there is a dragging production, check if it can be placed.
 			if (DraggingBoardProduction != null)
 			{
-				DraggingBoardProduction.transform.position = GetTouchWorldPosition();				
+				DraggingBoardProduction.transform.position = GetTouchWorldPosition();
+
+				// If dragging production is moved, check if it can be placed on the new position.
 				if (Vector3.Distance(DraggingBoardProduction.transform.position, _draggingBoardProductionLastCheckedPos) > _boardProductionPlaceCheckDistance)
 				{
 					_draggingBoardProductionLastCheckedPos = DraggingBoardProduction.transform.position;
@@ -100,6 +109,7 @@ namespace GameEngine.Game.Core
 					_boardGrid.CheckBoardElementBounds(DraggingBoardProduction, DraggingBoardProduction.transform.position, _boardElementPlacementInfo
 						,(currentCellIndex, status) =>
 						{
+							// Set grid overlay colors according to availability of cells.
 							if (status)
 								_gridCellOverlays[currentCellIndex - bottomLeftCellIndex].SetAvailableColor();
 							else
@@ -107,19 +117,24 @@ namespace GameEngine.Game.Core
 						});
 				}
 
+#if UNITY_EDITOR
 				foreach (var cellIndex in _boardElementPlacementInfo.AvailableCells)
 					GEDebug.DrawCube(_boardGrid.Grid.GetCellCenterWorld(cellIndex), Color.green, _boardGrid.Grid.cellSize);
 
 				foreach (var cellIndex in _boardElementPlacementInfo.NotAvailableCells)
 					GEDebug.DrawCube(_boardGrid.Grid.GetCellCenterWorld(cellIndex), Color.red, _boardGrid.Grid.cellSize);
+#endif
 			}
 
+			// Check if move position button like mouse right click is pressed.
 			if (InputManager.MoveToPositionButton.IsTouchDown)
 			{
+				// Check if selected board element is a unit.
 				if (SelectedBoardElement != null 
 					&& SelectedBoardElement.PlacableData is IPlacableUnit placableUnit 
 					&& SelectedBoardElement is BoardProductionItem productionItem)
 				{
+					// Find touched cell and check if it is available to move.
 					Vector3 touchWorldPosition = GetTouchWorldPosition();
 					Vector3Int touchedCellIndex = _boardGrid.Grid.WorldToCell(touchWorldPosition);
 					GEDebug.DrawCube(_boardGrid.Grid.GetCellCenterWorld(touchedCellIndex), Color.blue, _boardGrid.Grid.cellSize, 5f);
@@ -129,9 +144,11 @@ namespace GameEngine.Game.Core
 						Vector3Int targetCellIndex = _boardElementPlacementInfo.BottomLeftCellIndex;
 						GEDebug.DrawCube(_boardGrid.Grid.GetCellCenterWorld(targetCellIndex), Color.green, _boardGrid.Grid.cellSize, 5f);
 
+						// Create path to target position.
 						var path = _pathfinder.FindPath(SelectedBoardElement.GetStandingCellIndex(), targetCellIndex);
 						if (path != null && path.Count > 0)
 						{
+							// Check if an attackable enemy is targeted.
 							bool attack = false;
 							var touchedBoardElement = _boardGrid.GetBoardElement(touchedCellIndex);
 							if (touchedBoardElement != null && touchedBoardElement.FightingSide != SelectedBoardElement.FightingSide)
@@ -140,12 +157,15 @@ namespace GameEngine.Game.Core
 							_movePointIndicator.position = _boardGrid.Grid.GetCellCenterWorld(path[path.Count - 1].GridIndex);
 							_movePointIndicator.gameObject.SetActive(true);
 
+							// Move unit to target position.
 							productionItem.MovePath(path, onPathCompleted: (reachedCellIndex) =>
 							{
 								// If an enemy is targeted, start attacking.
 								if (attack)
 									productionItem.StartAttacking(touchedBoardElement);
 							});
+
+							// Update grid info for moved unit.
 							_boardGrid.MoveBoardElement(productionItem, path[path.Count - 1].GridIndex, false);
 						}
 					}
@@ -181,6 +201,7 @@ namespace GameEngine.Game.Core
 				Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 		}
 		
+		// Creates a grid overlay on dragging production item to show available and not available cells to place the production.
 		private void CreateGridCellOverlay(BoardProduction boardProduction)
 		{
 			ClearGridCellOverlay();
@@ -274,6 +295,7 @@ namespace GameEngine.Game.Core
 			}
 		}
 
+		// Called when a production in menu is deselected.
 		public void OnProductionMenuItemDeselected()
 		{
 			// Notify Production menu to make scrollview scrollable again.
@@ -284,13 +306,14 @@ namespace GameEngine.Game.Core
 
 			if (DraggingBoardProduction != null)
 			{
-				// If dragging board production could not be placed, return it to the pool.
+				// If dragging board production could not be placed on board, return it to the pool.
 				if (BoardUI.Instance.IsScreenPointOverMenu(InputManager.TouchPosition)
 					|| !_boardGrid.PlaceBoardElement(DraggingBoardProduction, _boardElementPlacementInfo))
 				{
 					EventManager.TriggerEvent(new BoardElementPlacementEvent(DraggingBoardProduction, BoardElementPlacementStatus.Failed));
 					DraggingBoardProduction.GetComponent<PoolableObject>().Destroy();
 				}
+				// Dragging board production is placed on board, notify listerners.
 				else
 					EventManager.TriggerEvent(new BoardElementPlacementEvent(DraggingBoardProduction, BoardElementPlacementStatus.Placed));
 
@@ -299,14 +322,14 @@ namespace GameEngine.Game.Core
 
 			DraggingBoardProduction = null;
 			DraggingProductionMenuItemView = null;
-
-			// Debug.Log("Pointer up!");
 		}
 
+		// Called when a production item like a unit is selected from the information menu.
 		public void OnInformationProductionItemSelected(InformationMenuProductItemView informationMenuItemView)
 		{
 			if (informationMenuItemView.ProductionItem is IPlacableUnit placableUnit)
 			{
+				// Find cell index to spawn unit.
 				BoardElement spawnerBoardElement = BoardUI.Instance.InformationMenu.BoardElementToShow;
 				IItemProducer itemProducer = spawnerBoardElement.PlacableData as IItemProducer;
 				Vector3Int targetSpawnCell = spawnerBoardElement.PlacedCellIndex + itemProducer.SpawnCellIndex;
@@ -314,6 +337,7 @@ namespace GameEngine.Game.Core
 				// Find available cells to spawn unit around spawn point.
 				if (_boardGrid.FindFirstEmptyCell(targetSpawnCell, placableUnit.Placable.Size, _boardElementPlacementInfo))
 				{
+					// Create unit and place it on board on first available cell.
 					var newUnit = CreateBoardProductionUnit(placableUnit, _boardElementPlacementInfo.Position);
 					_boardGrid.PlaceBoardElement(newUnit, _boardElementPlacementInfo);
 
@@ -322,6 +346,7 @@ namespace GameEngine.Game.Core
 			}
 		}
 
+		// Called when an element on board is selected.
 		private void OnBoardElementSelected(BoardElement boardElement)
 		{
 			if (SelectedBoardElement != null)
@@ -329,8 +354,6 @@ namespace GameEngine.Game.Core
 
 			boardElement.OnSelected();
 			SelectedBoardElement = boardElement;
-
-			// Debug.Log("Selected: " + SelectedBoardElement.PlacableData.Name);
 
 			if (boardElement.PlacableData is IItemProducer itemProducer)
 				BoardUI.Instance.InformationMenu.Show(boardElement);
@@ -340,6 +363,7 @@ namespace GameEngine.Game.Core
 			EventManager.TriggerEvent(new BoardElementSelectEvent(boardElement, true));
 		}
 
+		// Called when an element on board is deselected.
 		private void OnBoardElementDeselected(BoardElement boardElement)
 		{
 			_movePointIndicator.gameObject.SetActive(false);

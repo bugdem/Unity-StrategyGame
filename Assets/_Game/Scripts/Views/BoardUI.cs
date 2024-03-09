@@ -18,5 +18,10 @@ namespace GameEngine.Game.Core
             return RectTransformUtility.RectangleContainsScreenPoint(ProductionMenu.GetComponent<RectTransform>(), screenPoint) ||
 				   RectTransformUtility.RectangleContainsScreenPoint(InformationMenu.GetComponent<RectTransform>(), screenPoint);
 		}
-    }
+
+		public void QuitApplication()
+		{
+			Application.Quit();
+		}
+	}
 }

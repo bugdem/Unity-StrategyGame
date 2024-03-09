@@ -3,6 +3,7 @@ using GameEngine.Library.Utils;
 
 namespace GameEngine.Game.Core
 {
+	// Manages object pools for different types of objects.
     public class PoolManager : PersistentSingleton<PoolManager>
     {
 		[SerializeField] private SimpleObjectPooler _boardProductionPooler;

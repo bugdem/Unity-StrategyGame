@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace GameEngine.Game.Core
 {
+	// A dummy sdk class that listens to events and logs them.
     public class SdkManager : PersistentSingleton<SdkManager>, EventListener<BoardElementEvent>
 																, EventListener<BoardElementPlacementEvent>
 																, EventListener<BoardElementSelectEvent>

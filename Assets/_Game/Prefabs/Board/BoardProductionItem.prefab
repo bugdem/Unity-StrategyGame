@@ -154,7 +154,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1028446680203449713, guid: 5a903ad487157ed49aec324bd4f23e99, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4854512497013621706, guid: 5a903ad487157ed49aec324bd4f23e99, type: 3}
       propertyPath: m_Name
@@ -205,7 +205,19 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7961064781698395614, guid: 5a903ad487157ed49aec324bd4f23e99, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7961064781698395614, guid: 5a903ad487157ed49aec324bd4f23e99, type: 3}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7961064781698395614, guid: 5a903ad487157ed49aec324bd4f23e99, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7961064781698395614, guid: 5a903ad487157ed49aec324bd4f23e99, type: 3}
+      propertyPath: m_WasSpriteAssigned
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -21,6 +21,7 @@ namespace GameEngine.Game.Core
 
 		public PlacableData Placable => _placable;
 
+		// Hide main data and expose it as read-only as we do not want SO to be modified at runtime.
 		private ReadOnlyCollection<ProductionItem> _readOnlyProductionItems;
 		public ReadOnlyCollection<ProductionItem> ProductionItems
         {

@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace GameEngine.Game.Core
 {
+	// Used for registering a board element to the board controller and pool manager.
+	// This class is required on board element that is already placed on scene.
 	[RequireComponent(typeof(BoardElement))]
 	public abstract class BoardElementRegister : RegisterWorldPoolableObject
 	{
@@ -26,10 +28,14 @@ namespace GameEngine.Game.Core
 
 		private void OnValidate()
 		{
-			if (PlacableData != null)
+			if (!Application.isPlaying)
 			{
-				var boardElement = GetComponent<BoardElement>();
-				boardElement.SetPlacable(PlacableData, boardElement.FightingSide);
+				// Draw visuals	on scene view for the placable data.
+				if (PlacableData != null)
+				{
+					var boardElement = GetComponent<BoardElement>();
+					boardElement.SetPlacable(PlacableData, boardElement.FightingSide);
+				}
 			}
 		}
 	}

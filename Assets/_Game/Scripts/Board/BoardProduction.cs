@@ -14,6 +14,7 @@ namespace GameEngine.Game.Core
 		{
 			base.OnPlaced(boardGrid, bottomLeftCellIndex);
 
+			// Position spawn point visual on the board after placed if the building has production items.
 			if (PlacableData is IItemProducer itemProducer && itemProducer.ProductionItems.Count > 0)
 			{
 				Vector3Int targetSpawnCell = PlacedCellIndex + itemProducer.SpawnCellIndex;

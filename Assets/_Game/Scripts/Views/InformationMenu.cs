@@ -59,6 +59,7 @@ namespace GameEngine.Game.Core
 					// Create production item view.
 					var poolableProductionItemView = PoolManager.Instance.GetMenuItemForProductionItem();
 					poolableProductionItemView.transform.SetParent(_productionItemContainer);
+					poolableProductionItemView.transform.localScale = Vector3.one;
 					poolableProductionItemView.gameObject.SetActive(true);
 
 					var productionItemView = poolableProductionItemView.GetComponent<InformationMenuProductItemView>();

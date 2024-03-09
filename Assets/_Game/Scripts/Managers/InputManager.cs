@@ -106,7 +106,7 @@ namespace GameEngine.Game.Core
 	}
 
 	// Handles input button to be accessed by anytime in execution.
-	// Button status can be checked with IsDown in Update method or via OnTouchDown Event.
+	// Button status can be checked with IsTouchDown in Update method or via OnTouchDown Event.
 	public class InputButton
 	{
 		public bool IsTouchDown { get; private set; }

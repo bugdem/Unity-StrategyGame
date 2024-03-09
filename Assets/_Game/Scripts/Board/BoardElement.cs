@@ -14,6 +14,7 @@ namespace GameEngine.Game.Core
 		Enemy
 	}
 
+	// Represents a board element that can be placed on the board grid.
     public abstract class BoardElement : MonoBehaviour
     {
         [SerializeField] protected SpriteRenderer _icon;
@@ -41,6 +42,7 @@ namespace GameEngine.Game.Core
 
 			_fightingSide = fightingSide;
 			_icon.sprite = placableData.Placable.BoardSprite;
+			_icon.transform.localPosition = placableData.Placable.BoardSpriteOffset;
 
 			CurrentHealth = placableData.Placable.CurrentHealth;
 			MaxHealth = placableData.Placable.MaxHealth;
@@ -88,12 +90,8 @@ namespace GameEngine.Game.Core
 			return PlacedBoardGrid.GetBottomLeftCellIndex(transform.position, PlacableData.Placable.Size);
 		}
 
-		/// <summary>
-		/// Takes specified damage by attacker.
-		/// </summary>
-		/// <param name="attacker"></param>
-		/// <param name="damage"></param>
-		/// <returns>Returns true if destroyed after taking damage.</returns>
+		// Takes specified damage by attacker.
+		// Returns true if destroyed after taking damage.
 		public virtual bool TakeDamage(BoardElement attacker, int damage)
 		{
 			CurrentHealth -= damage;
@@ -111,12 +109,14 @@ namespace GameEngine.Game.Core
 
 		public virtual void GetDestroyed()
 		{
+			// Return to pool and notify listeners.
 			PlacedBoardGrid.RemoveBoardElement(this);
 			GetComponent<PoolableObject>().Destroy();
 
 			EventManager.TriggerEvent(new BoardElementEvent(this, BoardElementEventType.Destroyed));
 		}
 
+		// Reset values for next pool use.
 		protected virtual void ResetValues()
 		{
 			_icon.sortingLayerID = _defaultLayer;

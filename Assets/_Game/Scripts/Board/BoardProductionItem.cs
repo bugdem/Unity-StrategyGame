@@ -10,8 +10,7 @@ namespace GameEngine.Game.Core
     public class BoardProductionItem : BoardElement
     {
 		[Header("Production Item")]
-        [SerializeField] private Animator _animator;
-		
+        [SerializeField] private Animator _animator;		
 
 		protected Coroutine _moveCoroutine;
 		protected Coroutine _attackCoroutine;
@@ -84,9 +83,9 @@ namespace GameEngine.Game.Core
 				onPathNodeReached?.Invoke(nextNode.GridIndex);
 			}
 
-			onPathCompleted?.Invoke(pathNodes[pathNodes.Count - 1].GridIndex);
-
 			_animator.SetBool("Walk", false);
+
+			onPathCompleted?.Invoke(pathNodes[pathNodes.Count - 1].GridIndex);
 		}
 
 		public virtual void OnAnimationEvent(string eventName)
@@ -107,6 +106,8 @@ namespace GameEngine.Game.Core
 
 			LookAt(target.PlacedCellIndex);
 
+			// Play attack animation and attack in every attack speed interval.
+			// Sync attack with hit animation event.
 			while (!target.IsDestroyed)
 			{
 				_animator.Play("Attack");

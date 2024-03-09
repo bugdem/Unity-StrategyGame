@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 6391770787034563635}
   _cmMain: {fileID: 6391770786805811046}
-  _bounds: {x: 25, y: 25}
+  _bounds: {x: 30, y: 30}
   _boundsOffset: {x: 0, y: 0}
   _focusEase: 9
   _focusDuration: 0.5

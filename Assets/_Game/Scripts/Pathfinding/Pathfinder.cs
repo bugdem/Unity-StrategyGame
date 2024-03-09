@@ -89,6 +89,8 @@ namespace GameEngine.Game.Pathfinding
 					}
 				}
 
+				// TODO(GE): Handle deadlocks.
+				// This may happen when trying to find a path to a cell that is not reachable(available cell surrounded by not walkable areas).
 				loopCount++;
 				if (loopCount > 1000)
 					break;

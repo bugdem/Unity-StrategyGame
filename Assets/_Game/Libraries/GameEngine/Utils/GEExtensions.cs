@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -84,7 +83,7 @@ namespace GameEngine.Library.Utils
 		public static bool IsBeingEditedInIsolatedPrefabMode(this GameObject obj)
 		{
 #if UNITY_EDITOR
-            return PrefabStageUtility.GetPrefabStage(obj) != null;
+            return UnityEditor.SceneManagement.PrefabStageUtility.GetPrefabStage(obj) != null;
 #endif
             return false;
         }
