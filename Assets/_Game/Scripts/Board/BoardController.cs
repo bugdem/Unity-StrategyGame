@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GameEngine.Library.Utils;
-using System;
-using UnityEngine.UIElements;
 using GameEngine.Game.Pathfinding;
 
 namespace GameEngine.Game.Core
@@ -92,8 +90,17 @@ namespace GameEngine.Game.Core
 				if (Vector3.Distance(DraggingBoardProduction.transform.position, _draggingBoardProductionLastCheckedPos) > _boardProductionPlaceCheckDistance)
 				{
 					_draggingBoardProductionLastCheckedPos = DraggingBoardProduction.transform.position;
+
+					Vector3Int bottomLeftCellIndex = _boardGrid.GetBottomLeftCellIndex(DraggingBoardProduction.transform.position, DraggingBoardProduction.PlacableData.Placable.Size);
 					_boardElementPlacementInfo.Clear();
-					_boardGrid.CheckBoardElementBounds(DraggingBoardProduction, DraggingBoardProduction.transform.position, _boardElementPlacementInfo);
+					_boardGrid.CheckBoardElementBounds(DraggingBoardProduction, DraggingBoardProduction.transform.position, _boardElementPlacementInfo
+						,(currentCellIndex, status) =>
+						{
+							if (status)
+								_gridCellOverlays[currentCellIndex - bottomLeftCellIndex].SetAvailableColor();
+							else
+								_gridCellOverlays[currentCellIndex - bottomLeftCellIndex].SetNotAvailableColor();
+						});
 				}
 
 				foreach (var cellIndex in _boardElementPlacementInfo.AvailableCells)
@@ -144,6 +151,39 @@ namespace GameEngine.Game.Core
 				Vector3 cellCenter = _boardGrid.Grid.GetCellCenterWorld(touchedCellPosition);
 				GEDebug.DrawCube(cellCenter, Color.red, _boardGrid.Grid.cellSize);
 			}
+		}
+
+		private Dictionary<Vector3Int, GridCellOverlay> _gridCellOverlays = new();
+		private void CreateGridCellOverlay(BoardProduction boardProduction)
+		{
+			ClearGridCellOverlay();
+
+			_boardGrid.GetBottomLeftCellIndex(boardProduction.transform.position, boardProduction.PlacableData.Placable.Size);
+
+			for (int x = 0; x < boardProduction.PlacableData.Placable.Size.x; x++)
+			{
+				for (int y = 0; y < boardProduction.PlacableData.Placable.Size.y; y++)
+				{
+					var gridCellIndex = new Vector3Int(x, y, 0);
+					var gridCellOverlay = PoolManager.Instance.GetGridCellOverlay().GetComponent<GridCellOverlay>();
+					gridCellOverlay.transform.SetParent(DraggingBoardProduction.transform);				
+					
+					gridCellOverlay.SetDefaultColor();
+					gridCellOverlay.CellIndex = gridCellIndex;
+					gridCellOverlay.transform.position = _boardGrid.GetWorldPositionFromLocalCellIndex(boardProduction, gridCellIndex);
+					gridCellOverlay.gameObject.SetActive(true);
+
+					_gridCellOverlays.Add(gridCellOverlay.CellIndex, gridCellOverlay);
+				}
+			}
+		}
+
+		private void ClearGridCellOverlay()
+		{
+			foreach (var gridCellOverlay in _gridCellOverlays.Values)
+				gridCellOverlay.Destroy();
+
+			_gridCellOverlays.Clear();
 		}
 
 		private BoardProduction CreateBoardProduction(IPlacableData placableData, Vector3 position)
@@ -197,6 +237,8 @@ namespace GameEngine.Game.Core
 				DraggingBoardProduction = CreateBoardProduction(placableData, newBoardProductionPosition);
 				DraggingBoardProduction.OnPlacementStarted();
 
+				CreateGridCellOverlay(DraggingBoardProduction);
+
 				if (BoardUI.Instance.InformationMenu.IsShowing)
 					OnBoardElementDeselected(BoardUI.Instance.InformationMenu.BoardElementToShow);
 			}
@@ -218,6 +260,8 @@ namespace GameEngine.Game.Core
 				{
 					DraggingBoardProduction.GetComponent<PoolableObject>().Destroy();
 				}
+
+				ClearGridCellOverlay();
 			}
 
 			DraggingBoardProduction = null;

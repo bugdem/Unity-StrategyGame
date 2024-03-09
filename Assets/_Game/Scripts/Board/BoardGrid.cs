@@ -1,4 +1,5 @@
 using GameEngine.Game.Pathfinding;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,6 +38,19 @@ namespace GameEngine.Game.Core
 							);
 		}
 
+		public Vector3 GetWorldPositionFromLocalCellIndex(BoardElement boardElement, Vector3Int cellIndex)
+		{
+			return GetWorldPositionFromLocalCellIndex(boardElement.transform.position, boardElement.PlacableData.Placable.Size, cellIndex);
+		}
+
+		public Vector3 GetWorldPositionFromLocalCellIndex(Vector3 centerPosition, Vector2Int size, Vector3Int cellIndex)
+		{
+			Vector3 bottomLeftOffset = GetOffsetToCenterFromBottomLeft(size);
+			Vector3 boardProductionBottomLeft = centerPosition + bottomLeftOffset;
+			boardProductionBottomLeft += new Vector3(Grid.cellSize.x * cellIndex.x, Grid.cellSize.y * cellIndex.y, 0f);
+			return boardProductionBottomLeft;
+		}
+
 		public Vector3Int GetBottomLeftCellIndex(Vector3 centerPosition, Vector2Int size)
 		{
 			Vector3 bottomLeftOffset = GetOffsetToCenterFromBottomLeft(size);
@@ -44,18 +58,18 @@ namespace GameEngine.Game.Core
 			return Grid.WorldToCell(boardProductionBottomLeft);
 		}
 
-		public bool CheckBoardElementBounds(BoardElement boardElement, Vector3 centerPosition, BoardElementPlacement placementInfo = null)
+		public bool CheckBoardElementBounds(BoardElement boardElement, Vector3 centerPosition, BoardElementPlacement placementInfo = null, Action<Vector3Int, bool> action = null)
 		{
-			return CheckBoardElementBounds(boardElement.PlacableData.Placable.Size, centerPosition, placementInfo);
+			return CheckBoardElementBounds(boardElement.PlacableData.Placable.Size, centerPosition, placementInfo, action);
 		}
 
-		public bool CheckBoardElementBounds(Vector2Int size, Vector3 centerPosition, BoardElementPlacement placementInfo = null)
+		public bool CheckBoardElementBounds(Vector2Int size, Vector3 centerPosition, BoardElementPlacement placementInfo = null, Action<Vector3Int, bool> action = null)
 		{
 			Vector3Int bottomLeftGridCellIndex = GetBottomLeftCellIndex(centerPosition, size);
-			return CheckBoardElementBounds(size, bottomLeftGridCellIndex, placementInfo);
+			return CheckBoardElementBounds(size, bottomLeftGridCellIndex, placementInfo, action);
 		}
 
-		public bool CheckBoardElementBounds(Vector2Int size, Vector3Int bottomLeftGridCellIndex, BoardElementPlacement placementInfo = null)
+		public bool CheckBoardElementBounds(Vector2Int size, Vector3Int bottomLeftGridCellIndex, BoardElementPlacement placementInfo = null, Action<Vector3Int, bool> action = null)
 		{
 			bool canBePlaced = CheckEmptyCells(size, bottomLeftGridCellIndex, false, (cellIndex, isEmpty) =>
 			{
@@ -63,6 +77,8 @@ namespace GameEngine.Game.Core
 					placementInfo?.NotAvailableCells.Add(cellIndex);
 				else
 					placementInfo?.AvailableCells.Add(cellIndex);
+
+				action?.Invoke(cellIndex, isEmpty);
 			});
 
 			if (placementInfo != null)
@@ -77,7 +93,7 @@ namespace GameEngine.Game.Core
 			return canBePlaced;
 		}
 
-		private bool CheckEmptyCells(Vector2Int size, Vector3Int bottomLeftCellIndex, bool breakIfNotEmpty = true, System.Action<Vector3Int, bool> action = null)
+		private bool CheckEmptyCells(Vector2Int size, Vector3Int bottomLeftCellIndex, bool breakIfNotEmpty = true, Action<Vector3Int, bool> action = null)
 		{
 			bool isEmpty = true;
 			for (int x = 0; x < size.x; x++)

@@ -9,6 +9,7 @@ namespace GameEngine.Game.Core
 		[SerializeField] private SimpleObjectPooler _boardProductionItemPooler;
 		[SerializeField] private SimpleObjectPooler _menuItemProductionPooler;
         [SerializeField] private SimpleObjectPooler _menuItemProductionItemPooler;
+		[SerializeField] private SimpleObjectPooler _gridCellOverlayPooler;
 
 		public PoolableObject GetBoardProduction()
 		{
@@ -28,6 +29,11 @@ namespace GameEngine.Game.Core
 		public PoolableObject GetMenuItemForProductionItem()
 		{
 			return _menuItemProductionItemPooler.GetPooledGameObject();
+		}
+
+		public PoolableObject GetGridCellOverlay()
+		{
+			return _gridCellOverlayPooler.GetPooledGameObject();
 		}
 	}
 }
