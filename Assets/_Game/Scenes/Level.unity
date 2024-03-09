@@ -407,6 +407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _boardSetting: {fileID: 11400000, guid: 108d8d3576984214aa510421818b2e06, type: 2}
   _boardGrid: {fileID: 1286620270}
+  _attackCursorTexture: {fileID: 2800000, guid: 759ff3efa4b1d4283ac05a2b4c084b38, type: 3}
 --- !u!4 &136400376
 Transform:
   m_ObjectHideFlags: 0

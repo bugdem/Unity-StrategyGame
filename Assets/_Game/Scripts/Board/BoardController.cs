@@ -10,6 +10,7 @@ namespace GameEngine.Game.Core
     {
 		[SerializeField] private BoardSetting _boardSetting;
 		[SerializeField] private BoardGrid _boardGrid;
+		public Texture2D _attackCursorTexture;
 
 		public BoardSetting Setting => _boardSetting;
 		public ProductionMenuItemView DraggingProductionMenuItemView { get; private set; }
@@ -153,6 +154,23 @@ namespace GameEngine.Game.Core
 				Vector3 cellCenter = _boardGrid.Grid.GetCellCenterWorld(touchedCellPosition);
 				GEDebug.DrawCube(cellCenter, Color.red, _boardGrid.Grid.cellSize);
 			}
+
+			bool attackCursor = false;
+			if (SelectedBoardElement != null && SelectedBoardElement.PlacableData is IPlacableUnit)
+			{
+				Vector3 touchWorldPosition = GetTouchWorldPosition();
+				Vector3Int touchedCellIndex = _boardGrid.Grid.WorldToCell(touchWorldPosition);
+				var touchedBoardElement = _boardGrid.GetBoardElement(touchedCellIndex);
+				if (touchedBoardElement != null && touchedBoardElement.FightingSide != SelectedBoardElement.FightingSide)
+				{
+					attackCursor = true;
+				}
+			}
+
+			if (attackCursor)
+				Cursor.SetCursor(_attackCursorTexture, new Vector2(25,0), CursorMode.Auto);
+			else
+				Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 		}
 		
 		private void CreateGridCellOverlay(BoardProduction boardProduction)
@@ -306,7 +324,7 @@ namespace GameEngine.Game.Core
 
 			// Debug.Log("Selected: " + SelectedBoardElement.PlacableData.Name);
 
-			if (boardElement.PlacableData is IItemProducer itemProducer && itemProducer.ProductionItems.Count > 0)
+			if (boardElement.PlacableData is IItemProducer itemProducer)
 				BoardUI.Instance.InformationMenu.Show(boardElement);
 			else
 				BoardUI.Instance.InformationMenu.Hide();
@@ -325,7 +343,7 @@ namespace GameEngine.Game.Core
 		}
 	}
 
-
+	#region Event Definitions
 	public enum BoardElementPlacementStatus : byte
 	{
 		Started,
@@ -379,4 +397,5 @@ namespace GameEngine.Game.Core
 			RemainingHealth = remainingHealth;
 		}
 	}
+	#endregion
 }
