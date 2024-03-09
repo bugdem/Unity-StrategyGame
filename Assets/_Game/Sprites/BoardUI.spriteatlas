@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BoardUI
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: c127e3f9b75644725ad804c4df314d36, type: 3}
+    - {fileID: 2800000, guid: 997ac216ed59c4b10a97280c63cf5f9c, type: 3}
+    - {fileID: 2800000, guid: 9107d96184f17498b9e0058c1b9fc98a, type: 3}
+    - {fileID: 2800000, guid: ceb893d4756474cbcbe1e61ace91823b, type: 3}
+    - {fileID: 2800000, guid: 59c5f6931e58c40b08a835658550c242, type: 3}
+    - {fileID: 2800000, guid: b80a798802c7b42cb8e5c909c7ffabcd, type: 3}
+    - {fileID: 2800000, guid: 284f99482071f47839549747513b612b, type: 3}
+    - {fileID: 2800000, guid: 9f3c50c022da640648ee29ee9ee7adf8, type: 3}
+    - {fileID: 2800000, guid: 33fe47cf57cd44758a7a8573ea549012, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 9f3c50c022da640648ee29ee9ee7adf8, type: 3}
+  - {fileID: 21300000, guid: 9107d96184f17498b9e0058c1b9fc98a, type: 3}
+  - {fileID: 21300000, guid: 59c5f6931e58c40b08a835658550c242, type: 3}
+  - {fileID: 21300000, guid: ceb893d4756474cbcbe1e61ace91823b, type: 3}
+  - {fileID: 21300000, guid: 997ac216ed59c4b10a97280c63cf5f9c, type: 3}
+  - {fileID: 21300000, guid: 284f99482071f47839549747513b612b, type: 3}
+  - {fileID: 21300000, guid: b80a798802c7b42cb8e5c909c7ffabcd, type: 3}
+  - {fileID: 21300000, guid: c127e3f9b75644725ad804c4df314d36, type: 3}
+  - {fileID: 21300000, guid: 33fe47cf57cd44758a7a8573ea549012, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Frame_ListFrame01_00
+  - Play_ActionText_Frame_Orange
+  - Play_ActionText_Frame_Red
+  - Play_ActionText_Frame_Purple
+  - Play_ActionText_Frame_Blue
+  - Frame_CardFrame03_Orange
+  - Play_Character_FocusTarget
+  - Frame_CardFrame04_d
+  - Frame_ListFrame08_s
+  m_RenderDataMap: {}
+  m_Tag: BoardUI
+  m_IsVariant: 0

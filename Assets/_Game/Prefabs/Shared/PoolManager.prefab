@@ -338,6 +338,6 @@ MonoBehaviour:
   NestWaitingPool: 1
   NestCurrentGameobject: 1
   IsDontDestroyOnLoadObject: 1
-  GameObjectToPool: {fileID: -6351895491547475768, guid: 4918e0cd2fc5cb1438c06d8b037f98d1, type: 3}
+  GameObjectToPool: {fileID: 2178606126445476432, guid: 4918e0cd2fc5cb1438c06d8b037f98d1, type: 3}
   PoolSize: 10
   PoolCanExpand: 1

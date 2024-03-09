@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,35 +11,45 @@ namespace GameEngine.Game.Core
         [Header("Production - Items")]
         [SerializeField] private Transform _productsContainer;
 		[SerializeField] private ScrollRect _scrollRect;
+		[SerializeField] private InfiniteScrollView _infiniteScrollView;
 
         private List<ProductionMenuItemView> _productionMenuItemViews = new();
 
 		private void Start()
 		{
             CreateProductionItems();
+
+			_infiniteScrollView.Initialize(_productionMenuItemViews, (index) => CreateProductionItem(index));
 		}
 
 		public void CreateProductionItems()
         {
             ClearProductionItems();
 
-            foreach (var product in BoardController.Instance.Setting.Productions)
+            for (int index = 0; index < BoardController.Instance.Setting.Productions.Count; index ++)
             {
-				var poolableProductItem = PoolManager.Instance.GetMenuItemForProduction();
-				poolableProductItem.transform.SetParent(_productsContainer);
-				poolableProductItem.transform.localScale = Vector3.one;
-				poolableProductItem.transform.localPosition = Vector3.zero;
-				poolableProductItem.transform.localRotation = Quaternion.identity;
-				poolableProductItem.gameObject.SetActive(true);
-
-				var poolableProductionMenuItem = poolableProductItem.GetComponent<ProductionMenuItemView>();
-
-				poolableProductionMenuItem.SetProduct(product);
-				_productionMenuItemViews.Add(poolableProductionMenuItem);
+				var newProductionMenuItem = CreateProductionItem(index);
+				_productionMenuItemViews.Add(newProductionMenuItem);
 			}
         }
 
-        private void ClearProductionItems()
+		private ProductionMenuItemView CreateProductionItem(int productionIndex)
+		{
+			productionIndex = productionIndex % BoardController.Instance.Setting.Productions.Count;
+			var product = BoardController.Instance.Setting.Productions[productionIndex];
+			var poolableProductionMenuItem = PoolManager.Instance.GetMenuItemForProduction() as ProductionMenuItemView;
+			poolableProductionMenuItem.transform.SetParent(_productsContainer);
+			poolableProductionMenuItem.transform.localScale = Vector3.one;
+			// poolableProductionMenuItem.transform.localPosition = Vector3.zero;
+			// poolableProductionMenuItem.transform.localRotation = Quaternion.identity;
+			poolableProductionMenuItem.gameObject.SetActive(true);
+
+			poolableProductionMenuItem.SetProduct(product);
+
+			return poolableProductionMenuItem;
+		}
+
+		private void ClearProductionItems()
         {
 			foreach (var productMenuItemView in _productionMenuItemViews)
 			{

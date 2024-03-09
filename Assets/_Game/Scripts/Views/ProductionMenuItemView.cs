@@ -1,3 +1,4 @@
+using GameEngine.Library.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -7,7 +8,7 @@ using UnityEngine.UI;
 
 namespace GameEngine.Game.Core
 {
-    public class ProductionMenuItemView : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
+    public class ProductionMenuItemView : PoolableObject, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private TMPro.TextMeshProUGUI _title;
         [SerializeField] private Image _icon;

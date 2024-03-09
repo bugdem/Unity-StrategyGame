@@ -107,9 +107,9 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4294967295
   m_fontSize: 32
-  m_fontSizeBase: 36
+  m_fontSizeBase: 32
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 32
   m_fontStyle: 0
@@ -160,7 +160,6 @@ GameObject:
   - component: {fileID: 7739545492345624273}
   - component: {fileID: 7739545492345624278}
   - component: {fileID: 2178606126445476432}
-  - component: {fileID: -6351895491547475768}
   m_Layer: 5
   m_Name: ProductMenuItemView
   m_TagString: Untagged
@@ -241,22 +240,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17fa333cced4a4f42b175cfa0d260ad3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LifeTime: 0
   _title: {fileID: 4762580277881898630}
   _icon: {fileID: 1374313956452486292}
   _highlight: {fileID: 3447110946324417628}
---- !u!114 &-6351895491547475768
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7739545492345624276}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 379e81d40067e0f4d9eb885ef2d53aca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LifeTime: 0
 --- !u!1 &7964921366156957464
 GameObject:
   m_ObjectHideFlags: 0
