@@ -117,6 +117,15 @@ namespace GameEngine.Game.Core
 			EventManager.TriggerEvent(new BoardElementEvent(this, BoardElementEventType.Destroyed));
 		}
 
+		protected virtual void ResetValues()
+		{
+			_icon.sortingLayerID = _defaultLayer;
+			_icon.sortingOrder = _defaultSortingOrder;
+
+			PlacedBoardGrid = null;
+			PlacedCellIndex = Vector3Int.zero;
+		}
+
 		private void OnEnable()
 		{
 			_defaultLayer = _icon.sortingLayerID;
@@ -125,11 +134,7 @@ namespace GameEngine.Game.Core
 
 		private void OnDisable()
 		{
-			_icon.sortingLayerID = _defaultLayer;
-			_icon.sortingOrder = _defaultSortingOrder;
-
-			PlacedBoardGrid = null;
-			PlacedCellIndex = Vector3Int.zero;
+			ResetValues();
 		}
 	}
 }
