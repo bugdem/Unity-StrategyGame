@@ -20,6 +20,8 @@ namespace GameEngine.Game.Core
 		private Vector3 _draggingBoardProductionLastCheckedPos = Vector3.zero;
 		private const float _boardProductionPlaceCheckDistance = 0.01f;
 
+		private Dictionary<Vector3Int, GridCellOverlay> _gridCellOverlays = new();
+
 		private Pathfinder _pathfinder;
 
 		protected override void Awake()
@@ -152,8 +154,7 @@ namespace GameEngine.Game.Core
 				GEDebug.DrawCube(cellCenter, Color.red, _boardGrid.Grid.cellSize);
 			}
 		}
-
-		private Dictionary<Vector3Int, GridCellOverlay> _gridCellOverlays = new();
+		
 		private void CreateGridCellOverlay(BoardProduction boardProduction)
 		{
 			ClearGridCellOverlay();
@@ -171,6 +172,7 @@ namespace GameEngine.Game.Core
 					gridCellOverlay.SetDefaultColor();
 					gridCellOverlay.CellIndex = gridCellIndex;
 					gridCellOverlay.transform.position = _boardGrid.GetWorldPositionFromLocalCellIndex(boardProduction, gridCellIndex);
+					gridCellOverlay.transform.localScale = _boardGrid.Grid.cellSize;
 					gridCellOverlay.gameObject.SetActive(true);
 
 					_gridCellOverlays.Add(gridCellOverlay.CellIndex, gridCellOverlay);
@@ -239,6 +241,8 @@ namespace GameEngine.Game.Core
 
 				CreateGridCellOverlay(DraggingBoardProduction);
 
+				EventManager.TriggerEvent(new BoardElementPlacementEvent(DraggingBoardProduction, BoardElementPlacementStatus.Started));
+
 				if (BoardUI.Instance.InformationMenu.IsShowing)
 					OnBoardElementDeselected(BoardUI.Instance.InformationMenu.BoardElementToShow);
 			}
@@ -258,8 +262,11 @@ namespace GameEngine.Game.Core
 				if (BoardUI.Instance.IsScreenPointOverMenu(InputManager.TouchPosition)
 					|| !_boardGrid.PlaceBoardElement(DraggingBoardProduction, _boardElementPlacementInfo))
 				{
+					EventManager.TriggerEvent(new BoardElementPlacementEvent(DraggingBoardProduction, BoardElementPlacementStatus.Failed));
 					DraggingBoardProduction.GetComponent<PoolableObject>().Destroy();
 				}
+				else
+					EventManager.TriggerEvent(new BoardElementPlacementEvent(DraggingBoardProduction, BoardElementPlacementStatus.Placed));
 
 				ClearGridCellOverlay();
 			}
@@ -283,6 +290,8 @@ namespace GameEngine.Game.Core
 				{
 					var newUnit = CreateBoardProductionUnit(placableUnit, _boardElementPlacementInfo.Position);
 					_boardGrid.PlaceBoardElement(newUnit, _boardElementPlacementInfo);
+
+					EventManager.TriggerEvent(new BoardElementEvent(newUnit, BoardElementEventType.Spawned));
 				}
 			}
 		}
@@ -295,19 +304,79 @@ namespace GameEngine.Game.Core
 			boardElement.OnSelected();
 			SelectedBoardElement = boardElement;
 
-			Debug.Log("Selected: " + SelectedBoardElement.PlacableData.Name);
+			// Debug.Log("Selected: " + SelectedBoardElement.PlacableData.Name);
 
 			if (boardElement.PlacableData is IItemProducer itemProducer && itemProducer.ProductionItems.Count > 0)
 				BoardUI.Instance.InformationMenu.Show(boardElement);
 			else
 				BoardUI.Instance.InformationMenu.Hide();
+
+			EventManager.TriggerEvent(new BoardElementSelectEvent(boardElement, true));
 		}
 
 		private void OnBoardElementDeselected(BoardElement boardElement)
 		{
 			boardElement.OnDeSelected();
 			BoardUI.Instance.InformationMenu.Hide();
+
+			EventManager.TriggerEvent(new BoardElementSelectEvent(boardElement, false));
+
 			SelectedBoardElement = null;
+		}
+	}
+
+
+	public enum BoardElementPlacementStatus : byte
+	{
+		Started,
+		Placed,
+		Failed
+	}
+
+	public struct BoardElementPlacementEvent
+	{
+		public BoardElement BoardElement;
+		public BoardElementPlacementStatus Status;
+
+		public BoardElementPlacementEvent(BoardElement boardElement, BoardElementPlacementStatus status)
+		{
+			BoardElement = boardElement;
+			Status = status;
+		}
+	}
+
+	public struct BoardElementSelectEvent
+	{
+		public BoardElement BoardElement;
+		public bool Status;
+
+		public BoardElementSelectEvent(BoardElement boardElement, bool status)
+		{
+			BoardElement = boardElement;
+			Status = status;
+		}
+	}
+
+	public enum BoardElementEventType : byte
+	{
+		Spawned,
+		Destroyed,
+		Damaged
+	}
+
+	public struct BoardElementEvent
+	{
+		public BoardElement BoardElement;
+		public BoardElementEventType EventType;
+		public int Damage;
+		public int RemainingHealth;
+
+		public BoardElementEvent(BoardElement boardElement, BoardElementEventType eventType, int damage = 0, int remainingHealth = 0)
+		{
+			BoardElement = boardElement;
+			EventType = eventType;
+			Damage = damage;
+			RemainingHealth = remainingHealth;
 		}
 	}
 }

@@ -97,6 +97,9 @@ namespace GameEngine.Game.Core
 		public virtual bool TakeDamage(BoardElement attacker, int damage)
 		{
 			CurrentHealth -= damage;
+
+			EventManager.TriggerEvent(new BoardElementEvent(this, BoardElementEventType.Damaged, damage, CurrentHealth.ClampMin(0)));
+
 			if (CurrentHealth <= 0)
 			{
 				GetDestroyed();
@@ -110,6 +113,8 @@ namespace GameEngine.Game.Core
 		{
 			PlacedBoardGrid.RemoveBoardElement(this);
 			GetComponent<PoolableObject>().Destroy();
+
+			EventManager.TriggerEvent(new BoardElementEvent(this, BoardElementEventType.Destroyed));
 		}
 
 		private void OnEnable()
